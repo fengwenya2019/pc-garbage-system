@@ -2,7 +2,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/laji": {
-        target: "http://192.168.58.49:8080/",
+        target: "http://127.0.0.1:8282/",
         changeOrigin: true,
         ws: true,
         pathRewrite: {
