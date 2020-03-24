@@ -2,7 +2,7 @@ import axios from "axios"
 // import qs from "qs"
 import state from "./state";
 
-axios.defaults.withCredentials = true; // 允许携带cookie
+// axios.defaults.withCredentials = true; // 允许携带cookie
 
 export default{
     // 获取手机验证码登录
@@ -35,14 +35,39 @@ export default{
     //         });
     //     });
     // },
-    queryCode(store){
-        axios.get("/laji/login").then((res)=>{
-            console.log(res)
-            store.commit("setCode",res.data)
+    login(store,obj){
+        const para = JSON.parse(obj)
+        axios.get("laji/user/login2",{ 
+            params:{
+                userinfoPhone:parseInt(para.user),
+                userinfoPassword:para.password,
+            }    
+        }).then((res)=>{
+            console.log(res.data.msg === '处理成功')
+            // if(res.data.msg === '处理成功'){
+                this.$router.push({  //核心语句
+                    path:'/home',   //跳转的路径
+                })
+            // }
+            store.commit("setCode",res.data.msg)
         }).catch((err)=>{
             console.log(err)
-            // console.log("请求热搜词汇失败")
         })
     },
+    queryLaji(store){
+        axios.get("laji/laji/c/getAllc").then((res)=>{
+            console.log(res)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+    // queryCode(store){
+    //     axios.get("/laji/login").then((res)=>{
+    //         console.log(res)
+    //         store.commit("setCode",res.data)
+    //     }).catch((err)=>{
+    //         console.log(err)
+    //     })
+    // },
 
 }

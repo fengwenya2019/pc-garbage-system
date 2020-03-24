@@ -4,50 +4,53 @@
       <img src="../assets/bg2.gif" alt="bg" />
     </div>
     <div class="form-box">
-      <Tabs value="login">
-        <TabPane label="登录" name="login">
-          <Form class="form" :label-width="60">
-            <FormItem label="手机号">
-              <Input required placeholder="请输入手机号"></Input>
-            </FormItem>
-            <FormItem label="密码">
-              <Input required placeholder="请输入密码"></Input>
-            </FormItem>
-            <router-link to="/home">
-              <Button class="btn login-btn" type="primary">登录</Button>
-            </router-link>
-          </Form>
-        </TabPane>
-        <TabPane label="注册" name="register">
-          <Form class="form" :label-width="70">
-            <FormItem label="手机号">
-              <Input required placeholder="请输入手机号"></Input>
-            </FormItem>
-            <FormItem label="密码">
-              <Input required placeholder="请输入密码"></Input>
-            </FormItem>
-            <FormItem label="确认密码">
-              <Input required placeholder="再次输入密码"></Input>
-            </FormItem>
-            <FormItem label="验证码">
-              <Input required placeholder="请输入验证码">
-                <div>获取验证码</div>
-              </Input>
-            </FormItem>
-            <router-link to="/home">
-              <Button class="btn login-btn" type="primary">注册</Button>
-            </router-link>
-          </Form>
-        </TabPane>
-      </Tabs>
+      <Form class="form" :label-width="60" :model="formData">
+        <FormItem label="用户名">
+          <Input required placeholder="请输入用户名" v-model="formData.user"></Input>
+        </FormItem>
+        <FormItem label="密码">
+          <Input required placeholder="请输入密码" v-model="formData.password"></Input>
+        </FormItem>
+        <!-- <router-link to="/home"> -->
+          <Button class="btn login-btn" type="primary" @click="handleClick()">登录</Button>
+        <!-- </router-link> -->
+      </Form>
     </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-
-export default {};
+import {mapState} from "vuex"
+export default {
+  computed:{
+      ...mapState(["code"])
+  },
+  data(){
+    return{
+      formData:{
+        user:'13164339130',
+        password:'123456',
+      }
+    }
+  },
+  mounted(){
+    this.$store.dispatch("queryLaji")
+    
+  },
+  methods:{
+    handleClick(){
+      const params = JSON.stringify(this.formData)
+      // 发起登录请求
+      this.$store.dispatch("login",params)
+      // if(this.code === '处理成功'){
+        //  this.$router.push({  //核心语句
+        //     path:'/home',   //跳转的路径
+        //   })
+      // }
+    },
+  }
+};
 </script>
 
 <style scoped>
