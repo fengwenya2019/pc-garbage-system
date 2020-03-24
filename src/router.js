@@ -19,25 +19,41 @@ export default new Router({
       component: () => import('./views/Home.vue'),
       children: [
         {
-          path: '/searchguide',
-          name: 'searchguide',
-          component: () => import('./components/SearchGuide.vue'),
+          path: '/guidemanage',
+          name: 'guidemanage',
+          component: () => import('./components/GuideManage.vue'),
         },
         {
-          path: '/addguide',
-          name: 'addguide',
-          component: () => import('./components/AddGuide.vue'),
+          path: '/catamanage',
+          name: 'catamanage',
+          component: () => import('./components/CataManage.vue'),
         },
         {
-          path: '/editguide',
-          name: 'editguide',
-          component: () => import('./components/EditGuide.vue'),
+          path: '/locationmanage',
+          name: 'locationmanage',
+          component: () => import('./components/LocationManage.vue'),
         },
         {
-          path: '/deleteguide',
-          name: 'deleteguide',
-          component: () => import('./components/DeleteGuide.vue'),
+          path: '/sitemanage',
+          name: 'sitemanage',
+          component: () => import('./components/SiteManage.vue'),
         },
+        {
+          path: '/quasta',
+          name: 'quasta',
+          component: () => import('./components/QuaSta.vue'),
+        },
+        {
+          path: '/chart',
+          name: 'chart',
+          component: () => import('./components/Chart.vue'),
+        },
+        {
+          path: '/publish',
+          name: 'publish',
+          component: () => import('./components/Publish.vue'),
+        },
+
       ]
     }
   ]

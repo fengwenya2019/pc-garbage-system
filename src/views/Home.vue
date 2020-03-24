@@ -6,53 +6,53 @@
         <ul class="nav-ul">
           <li>
             <p class="nav-li-title">分类指南管理</p>
-            <router-link to="/searchguide">
-              <p class="nav-li">
-                <Icon type="md-document" />查询分类指南
+            <router-link to="/catamanage">
+              <p class="nav-li" :class="{active:isActive===1}" @click="handleClick(1)">
+                <Icon type="ios-options" />垃圾类别
               </p>
             </router-link>
-            <router-link to="/addguide">
-              <p class="nav-li">
-                <Icon type="md-document" />垃圾类别管理
+            <router-link to="/guidemanage">
+              <p class="nav-li" :class="{active:isActive===2}" @click="handleClick(2)">
+                <Icon type="ios-git-network" />分类指南
               </p>
             </router-link>
           </li>
           <li>
             <p class="nav-li-title">投放站点管理</p>
-            <router-link to="/searchguide">
-              <p class="nav-li">
-                <Icon type="md-document" />投放站点
+            <router-link to="/locationmanage">
+              <p class="nav-li" :class="{active:isActive===3}" @click="handleClick(3)">
+                <Icon type="ios-pin-outline" />地点位置
               </p>
             </router-link>
-            <router-link to="/addguide">
-              <p class="nav-li">
-                <Icon type="md-document" />投放站点
+            <router-link to="/sitemanage">
+              <p class="nav-li" :class="{active:isActive===4}" @click="handleClick(4)">
+                <Icon type="ios-locate-outline" />投放站点
               </p>
             </router-link>
           </li>
           <li>
             <p class="nav-li-title">垃圾数量统计</p>
-            <router-link to="/searchguide">
-              <p class="nav-li">
-                <Icon type="md-document" />查询分类指南
+            <router-link to="/quasta">
+              <p class="nav-li" :class="{active:isActive===5}" @click="handleClick(5)">
+                <Icon type="ios-list-box-outline" />记录数据
               </p>
             </router-link>
-            <router-link to="/addguide">
-              <p class="nav-li">
-                <Icon type="md-document" />垃圾类别管理
+            <router-link to="/chart">
+              <p class="nav-li" :class="{active:isActive===6}" @click="handleClick(6)">
+                <Icon type="ios-podium-outline" />查看图表
               </p>
             </router-link>
           </li>
           <li>
             <p class="nav-li-title">绿色日报管理</p>
-            <router-link to="/searchguide">
-              <p class="nav-li">
-                <Icon type="md-document" />查询分类指南
+            <router-link to="/publish">
+              <p class="nav-li" :class="{active:isActive===7}" @click="handleClick(7)">
+                <Icon type="ios-pricetag-outline" />发布日报
               </p>
             </router-link>
-            <router-link to="/addguide">
-              <p class="nav-li">
-                <Icon type="md-document" />垃圾类别管理
+            <router-link to="/">
+              <p class="nav-li" :class="{active:isActive===8}" @click="handleClick(8)">
+                <Icon type="md-time" />历史记录
               </p>
             </router-link>
           </li>
@@ -66,7 +66,25 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      isActive: null
+    };
+  },
+  methods: {
+    handleClick(index) {
+      console.log(index);
+      this.isActive = index;
+    },
+    handleMouseEnter(index) {
+      this.isActive = index;
+    },
+    handleMouseLeave() {
+      this.isActive = null;
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -82,6 +100,7 @@ export default {};
 .main {
   display: flex;
 }
+
 .nav {
   min-width: 240px;
   /* height: calc(100vh - 100px); */
@@ -104,8 +123,15 @@ export default {};
 .nav-ul li p {
   width: 100%;
   height: 40px;
-  font-size: 14px;
   line-height: 40px;
+}
+.nav-li {
+  font-size: 14px;
+}
+.active {
+  background-color: #2db7f5;
+  color: #fff;
+  font-size: 16px;
 }
 .container {
   width: 100%;
