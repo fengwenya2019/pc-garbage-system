@@ -6,12 +6,21 @@
     </div>
     <div class="list">
       <Table border :columns="columns1" :data="data1"></Table>
+       <div>{{this.code.code}}</div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+import {mapState} from "vuex"
+export default {
+   computed:{
+    ...mapState(["code"])
+  },
+  mounted(){
+    console.log(this.code)
+  }
+};
 </script>
 
 <style scoped>
