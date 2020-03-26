@@ -4,5 +4,8 @@ export default{
     setCode(state,v){
         state.code = v;
     },
+    setCata(state,v){
+        state.cataList = v;
+    }
     
 }

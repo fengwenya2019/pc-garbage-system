@@ -43,11 +43,11 @@ export default {
       const params = JSON.stringify(this.formData)
       // 发起登录请求
       this.$store.dispatch("login",params)
-      // if(this.code === '处理成功'){
-        //  this.$router.push({  //核心语句
-        //     path:'/home',   //跳转的路径
-        //   })
-      // }
+      if(this.code === '处理成功'){
+         this.$router.push({  //核心语句
+            path:'/home',   //跳转的路径
+          })
+      }
     },
   }
 };

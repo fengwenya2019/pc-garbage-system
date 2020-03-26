@@ -1,8 +1,8 @@
 import axios from "axios"
-// import qs from "qs"
+import qs from "qs"
 import state from "./state";
 
-// axios.defaults.withCredentials = true; // 允许携带cookie
+axios.defaults.withCredentials = true; // 允许携带cookie
 
 export default{
     // 获取手机验证码登录
@@ -35,32 +35,75 @@ export default{
     //         });
     //     });
     // },
+    // 登录接口
     login(store,obj){
         const para = JSON.parse(obj)
-        axios.get("laji/user/login2",{ 
+        axios.get("laji/user/login",{ 
             params:{
                 userinfoPhone:parseInt(para.user),
                 userinfoPassword:para.password,
             }    
         }).then((res)=>{
-            console.log(res.data.msg === '处理成功')
-            // if(res.data.msg === '处理成功'){
-                this.$router.push({  //核心语句
-                    path:'/home',   //跳转的路径
-                })
-            // }
             store.commit("setCode",res.data.msg)
         }).catch((err)=>{
             console.log(err)
         })
     },
-    queryLaji(store){
+    // 请求所有类别
+    queryCata(store){
         axios.get("laji/laji/c/getAllc").then((res)=>{
-            console.log(res)
+            store.commit("setCata",res.data.extend.classifications)
         }).catch((err)=>{
             console.log(err)
         })
-    }
+    }, 
+    
+    // 添加类别
+    addCata(store,obj){
+        console.log(obj,obj.index)
+        
+        axios({
+            url:'laji/laji/c/cinsert',
+            method:'post',
+            data:{
+                classificationinfoName:obj.classificationinfoName,
+                classificationinfoCode:obj.classificationinfoCode,
+                classificationinfoDescription:obj.classificationinfoDescription,
+            },
+            headers:{
+                "Content-Type":"application/json",
+            },
+            // transformRequest:[function(data){
+            //     data=qs.stringify(data)
+            //     // return data
+            // }],
+        }).then((res)=>{
+            // store.queryCata();
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
+    // 编辑类别
+    editCata(store,obj){
+        console.log(obj)
+        axios({
+            url:'laji/laji/c/cupdate',
+            method:'put',
+            params:{
+                classificationinfoId:obj.classificationinfoId,
+                classificationinfoName:obj.classificationinfoName,
+                classificationinfoCode:obj.classificationinfoCode,
+                classificationinfoDescription:obj.classificationinfoDescription,
+            },
+            // headers:{
+            //     "Content-Type":"application/json",
+            // },
+        }).then((res)=>{
+            // store.queryCata();
+        }).catch((err)=>{
+            console.log(err)
+        })
+    },
     // queryCode(store){
     //     axios.get("/laji/login").then((res)=>{
     //         console.log(res)

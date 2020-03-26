@@ -4,18 +4,18 @@
       <Button type="info" @click="newCata()">新建类别</Button>
     </div>
     <div class="cata-list">
-      <Table border :columns="columns" :data="data"></Table>
+      <Table border :columns="columns" :data="cataList"></Table>
     </div>
-    <Modal v-model="modal" :title="modalTitle" @on-ok="ok" @on-cancel="cancel">
+    <Modal v-model="modal" :title="modalTitle" @on-ok="ok(editCataType.classificationinfoId)" @on-cancel="cancel">
       <Form :model="editCataType" label-position="left" :label-width="100">
         <FormItem label="序号">
-          <Input v-model="editCataType.index"></Input>
+          <Input v-model="editCataType.classificationinfoId"></Input>
         </FormItem>
         <FormItem label="类别">
-          <Input v-model="editCataType.cata"></Input>
+          <Input v-model="editCataType.classificationinfoName"></Input>
         </FormItem>
         <FormItem label="描述">
-          <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="editCataType.detail"></Input>
+          <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="editCataType.classificationinfoDescription"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -23,37 +23,44 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
+  mounted() {
+    this.$store.dispatch('queryCata')
+  },
+  computed:{
+      ...mapState(["cataList"])
+  },
   data() {
     return {
       modal: false,
       modalTitle: "",
       tip: "",
       editCataType: {
-        index: "",
-        cata: "",
-        detail: ""
+        classificationinfoId: "",
+        classificationinfoName: "",
+        classificationinfoDescription: ""
       },
       columns: [
         {
           title: "序号",
-          key: "index",
+          key: "classificationinfoId",
           width: 100,
           align: "center"
         },
         {
           title: "类别",
-          key: "cata",
+          key: "classificationinfoName",
           width: 100,
           align: "center"
         },
         {
           title: "描述",
-          key: "detail",
-          // width: 100,
+          key: "classificationinfoDescription",
           align: "left",
+
           render: (h, params) => {
-            return h("div", params.row.detail);
+            return h("div", params.row.classificationinfoDescription);
           }
         },
         {
@@ -100,28 +107,6 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          index: 1,
-          cata: "厨余垃圾",
-          detail: "厨余垃圾是……"
-        },
-        {
-          index: 2,
-          cata: "有害垃圾",
-          detail: "有害垃圾是……"
-        },
-        {
-          index: 3,
-          cata: "可回收物",
-          detail: "可回收物是……"
-        },
-        {
-          index: 4,
-          cata: "其他垃圾",
-          detail: "其他垃圾是……"
-        }
-      ]
     };
   },
   methods: {
@@ -134,8 +119,19 @@ export default {
       this.modalTitle = "编辑类别";
       this.editCataType = cata;
     },
-    ok() {
-      this.$Message.info("新建成功");
+    ok(id) {
+      // this.$Message.info("新建成功");
+      // console.log(this.editCataType)
+      // const params = JSON.stringify(this.editCataType)
+      if( this.modalTitle = "新建类别"){
+        this.$store.dispatch("addCata",this.editCataType)
+      }{
+        const params = this.editCataType
+        params.classificationinfoId = id+''
+        console.log(toString(id))
+        this.$store.dispatch("editCata",params)
+      }
+      
     },
     cancel() {}
   }
