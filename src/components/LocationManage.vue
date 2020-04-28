@@ -6,16 +6,16 @@
     <div class="location-list">
       <Table border :columns="columns" :data="data"></Table>
     </div>
-    <Modal v-model="modal" :title="modalTitle" @on-ok="ok" @on-cancel="cancel">
-      <Form :model="editCataType" label-position="left" :label-width="100">
-        <FormItem label="序号">
-          <Input v-model="editCataType.index"></Input>
+    <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm()" @on-cancel="cancel">
+      <Form :model="editLocation" label-position="left" :label-width="100">
+        <FormItem label="校区">
+          <Input v-model="editLocation.cap"></Input>
         </FormItem>
-        <FormItem label="类别">
-          <Input v-model="editCataType.cata"></Input>
+        <FormItem label="投放站点">
+          <Input v-model="editLocation.site"></Input>
         </FormItem>
-        <FormItem label="描述">
-          <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="editCataType.detail"></Input>
+        <FormItem label="具体位置">
+          <Input v-model="editLocation.location"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -29,37 +29,30 @@ export default {
       modal: false,
       modalTitle: "",
       tip: "",
-      editCataType: {
-        index: "",
-        cata: "",
-        detail: ""
+      editLocation: {
+        cap: "",
+        site: "",
+        location: ""
       },
       columns: [
         {
-          title: "序号",
-          key: "index",
-          width: 100,
+          title: "校区",
+          key: "cap",
           align: "center"
         },
         {
-          title: "类别",
-          key: "cata",
-          width: 100,
+          title: "投放站点",
+          key: "site",
           align: "center"
         },
         {
-          title: "描述",
-          key: "detail",
-          // width: 100,
-          align: "left",
-          render: (h, params) => {
-            return h("div", params.row.detail);
-          }
+          title: "具体位置",
+          key: "location",
+          align: "center"
         },
         {
           title: "操作",
           key: "operation",
-          width: 150,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -90,7 +83,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      // this.remove(params.index);
+                      this.deleteLocation();
                     }
                   }
                 },
@@ -102,24 +95,24 @@ export default {
       ],
       data: [
         {
-          index: 1,
-          cata: "厨余垃圾",
-          detail: "厨余垃圾是……"
+          cap: "龙子湖",
+          site: "1号宿舍楼楼",
+          location: "1号楼西门左拐20米"
         },
         {
-          index: 2,
-          cata: "有害垃圾",
-          detail: "有害垃圾是……"
+          cap: "龙子湖",
+          site: "20号教学楼",
+          location: "20号教学楼一楼"
         },
         {
-          index: 3,
-          cata: "可回收物",
-          detail: "可回收物是……"
+          cap: "龙子湖",
+          site: "新餐厅",
+          location: "新餐厅1楼南出口"
         },
         {
-          index: 4,
-          cata: "其他垃圾",
-          detail: "其他垃圾是……"
+          cap: "龙子湖",
+          site: "第一报告厅",
+          location: "第一报告厅东门"
         }
       ]
     };
@@ -129,15 +122,42 @@ export default {
       this.modal = true;
       this.modalTitle = "新建位置";
     },
-    editCata(cata) {
+    editCata(loca) {
       this.modal = true;
       this.modalTitle = "编辑位置";
-      this.editCataType = cata;
+      this.editLocation.cap = loca.cap;
+      this.editLocation.site = loca.site;
+      this.editLocation.location = loca.location;
     },
-    ok() {
-      this.$Message.info("新建成功");
+    handleForm() {
+      if (this.modalTitle === "新建位置") {
+        this.$Message.info("新建成功");
+      } else {
+        this.$Message.info("编辑成功");
+      }
+      this.clearForm();
     },
-    cancel() {}
+    cancel() {
+      this.clearForm();
+    },
+    // 清空表单
+    clearForm() {
+      this.editLocation.cap = "";
+      this.editLocation.site = "";
+      this.editLocation.location = "";
+    },
+    deleteLocation() {
+      this.$Modal.confirm({
+        title: "确定删除这条数据吗？",
+        onOk: () => {
+          // 发起删除数据的请求
+          this.$Message.info("删除成功");
+        },
+        onCancel: () => {
+          // this.$Message.info("取消删除");
+        }
+      });
+    }
   }
 };
 </script>

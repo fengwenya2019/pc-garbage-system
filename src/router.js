@@ -19,41 +19,45 @@ export default new Router({
       component: () => import('./views/Home.vue'),
       children: [
         {
-          path: '/guidemanage',
+          path: '/home/guidemanage',
           name: 'guidemanage',
           component: () => import('./components/GuideManage.vue'),
         },
         {
-          path: '/catamanage',
+          path: '/home/catamanage',
           name: 'catamanage',
           component: () => import('./components/CataManage.vue'),
         },
         {
-          path: '/locationmanage',
+          path: '/home/locationmanage',
           name: 'locationmanage',
           component: () => import('./components/LocationManage.vue'),
         },
         {
-          path: '/sitemanage',
+          path: '/home/sitemanage',
           name: 'sitemanage',
           component: () => import('./components/SiteManage.vue'),
         },
         {
-          path: '/quasta',
+          path: '/home/quasta',
           name: 'quasta',
           component: () => import('./components/QuaSta.vue'),
         },
         {
-          path: '/chart',
+          path: '/home/chart',
           name: 'chart',
           component: () => import('./components/Chart.vue'),
         },
         {
-          path: '/publish',
+          path: '/home/publish',
           name: 'publish',
           component: () => import('./components/Publish.vue'),
         },
-
+        {
+          path: '/home/history',
+          name: 'history',
+          component: () => import('./components/ReportHistory.vue'),
+        },
       ]
     }
   ]

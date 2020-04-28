@@ -7,16 +7,13 @@
       <Table border :columns="columns" :data="data"></Table>
     </div>
     <!-- 新建编辑modal框 -->
-    <Modal v-model="modal" :title="modalTitle" @on-ok="ok" @on-cancel="cancel">
+    <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm" @on-cancel="cancel">
       <Form :model="editRec" label-position="left" :label-width="100">
-        <FormItem label="序号">
-          <Input v-model="editRec.index"></Input>
-        </FormItem>
         <FormItem label="时间">
           <Input v-model="editRec.time"></Input>
         </FormItem>
         <FormItem label="类别">
-          <Select v-model="editRec.value" style="width:390px">
+          <Select v-model="editRec" :value="editRec.cata" style="width:390px">
             <Option v-for="item in cataList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
@@ -54,17 +51,11 @@ export default {
         }
       ],
       editRec: {
-        index: "",
+        time: "",
         cata: "",
         output: ""
       },
       columns: [
-        {
-          title: "序号",
-          key: "index",
-          width: 200,
-          align: "center"
-        },
         {
           title: "时间",
           key: "time",
@@ -143,7 +134,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      // this.remove(params.index);
+                      this.deleteQua();
                     }
                   }
                 },
@@ -155,31 +146,26 @@ export default {
       ],
       data: [
         {
-          index: 1,
           time: "2020年1月1日",
           cata: "厨余垃圾",
           output: 1.2
         },
         {
-          index: 2,
           time: "2020年1月1日",
           cata: "其他垃圾",
           output: 1.2
         },
         {
-          index: 3,
           time: "2020年1月23日",
           cata: "有害垃圾",
           output: 10.1
         },
         {
-          index: 4,
           time: "2020年1月24日",
           cata: "厨余垃圾",
           output: 2.2
         },
         {
-          index: 5,
           time: "2020年1月25日",
           cata: "其他垃圾",
           output: 1.4
@@ -195,13 +181,31 @@ export default {
     editRecord(record) {
       this.modal = true;
       this.modalTitle = "编辑记录";
-      this.editRec = record;
-      console.log(this.editRec);
+      this.editRec.time = record.time;
+      this.editRec.cata = record.cata;
+      this.editRec.output = record.output;
     },
-    ok() {
-      this.$Message.info("新建成功");
+    handleForm() {
+      if (this.modalTitle === "新建记录") {
+        this.$Message.info("新建成功");
+      } else {
+        this.$Message.info("编辑成功");
+      }
+      this.clearForm();
     },
-    cancel() {}
+    cancel() {},
+    deleteQua() {
+      this.$Modal.confirm({
+        title: "确定删除这条数据吗？",
+        onOk: () => {
+          // 发起删除数据的请求
+          this.$Message.info("删除成功");
+        },
+        onCancel: () => {
+          // this.$Message.info("取消删除");
+        }
+      });
+    }
   }
 };
 </script>
