@@ -11,9 +11,7 @@
         <FormItem label="密码">
           <Input required placeholder="请输入密码" v-model="formData.password"></Input>
         </FormItem>
-        <router-link to="/home/catamanage">
           <Button class="btn login-btn" type="primary" @click="handleClick()">登录</Button>
-        </router-link>
       </Form>
     </div>
   </div>
@@ -22,32 +20,36 @@
 <script>
 // @ is an alias to /src
 import { mapState } from "vuex";
+import axios from "axios"
 export default {
   computed: {
-    ...mapState(["code"])
   },
   data() {
     return {
       formData: {
-        user: "13164339130",
-        password: "123456"
+        adminname: "",
+        adminpwd: ""
       }
     };
   },
   mounted() {
-    this.$store.dispatch("queryLaji");
   },
   methods: {
     handleClick() {
-      const params = JSON.stringify(this.formData);
+      console.log(this.formData)
       // 发起登录请求
-      // this.$store.dispatch("login", params);
-      if (this.code === "处理成功") {
+      axios.post("laji/admin/login",{ 
+        'adminname':this.formData.adminname,
+        'adminpwd':this.formData.adminpwd
+      }).then((res)=>{
+        this.$Message.success('登录成功');
         this.$router.push({
           //核心语句
           path: "/home" //跳转的路径
         });
-      }
+      }).catch((err)=>{
+          console.log(err)
+      })
     }
   }
 };

@@ -1,30 +1,30 @@
 <template>
-  <div class="site-manage">
+  <div class="cata-manage">
     <div class="new-btn">
-      <Button type="info" @click="newSite()">新建站点</Button>
+      <Button type="info" @click="newCata()">新建站点</Button>
     </div>
-    <div class="site-list">
-      <Table border :columns="columns" :data="data"></Table>
+    <div class="cata-list">
+      <Table border :columns="columns" :data="siteList"></Table>
     </div>
     <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm()" @on-cancel="cancel">
-      <Form :model="editSite" label-position="left" :label-width="100">
-        <FormItem label="投放站点">
-          <Input v-model="editSite.site"></Input>
+      <Form :model="formLeft" label-position="left" :label-width="100">
+        <FormItem label="站点名称">
+          <Input v-model="formLeft.locationinfoName"></Input>
         </FormItem>
-        <FormItem label="具体位置">
-          <Input v-model="editSite.location"></Input>
+         <FormItem label="详细位置">
+          <Input v-model="formLeft.detail"></Input>
         </FormItem>
         <FormItem label="开放时间">
-          <Input v-model="editSite.opentime"></Input>
+          <Input v-model="formLeft.opentime"></Input>
         </FormItem>
-        <FormItem label="垃圾桶类别">
-          <Input v-model="editSite.bucketcata"></Input>
+         <FormItem label="垃圾桶类别">
+          <Input v-model="formLeft.bucketcata"></Input>
         </FormItem>
-        <FormItem label="垃圾桶数量">
-          <Input v-model="editSite.bucketnum"></Input>
+         <FormItem label="垃圾桶数量">
+          <Input v-model="formLeft.bucketnum"></Input>
         </FormItem>
         <FormItem label="描述">
-          <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="editSite.detail"></Input>
+          <Input type="textarea" :autosize="{minRows: 3,maxRows: 5}" v-model="formLeft.attention"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -32,57 +32,62 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
+  created() {
+    this.$store.dispatch('querySiteList')
+  },
+  mounted(){
+  },
+  computed:{
+      ...mapState(["siteList"])
+  },
   data() {
     return {
       modal: false,
       modalTitle: "",
-      tip: "",
-      editSite: {
-        site: "",
-        location: "",
-        opentime: "",
+      editId:'',
+      formLeft: {
+        locationinfoName: "",
+        detail: "",
+        opentime:"",
         bucketcata: "",
         bucketnum: "",
-        detail: ""
+        attention: "",
       },
       columns: [
         {
-          title: "投放站点",
-          width: 120,
-          key: "site",
+          title: "站点名称",
+          key: "locationinfoName",
+         
           align: "center"
         },
         {
-          title: "具体位置",
-          width: 160,
-          key: "location",
+          title: "详细位置",
+          key: "detail",
           align: "center"
         },
         {
           title: "开放时间",
-          width: 120,
           key: "opentime",
           align: "center"
         },
         {
           title: "垃圾桶类别",
           key: "bucketcata",
-          align: "center"
+          align: "center",
+          width: 150,
         },
         {
           title: "垃圾桶数量",
-          width: 110,
           key: "bucketnum",
-          align: "center"
+          align: "center",
+          width: 150,
         },
         {
           title: "描述",
-          key: "detail",
-          align: "left",
-          render: (h, params) => {
-            return h("div", params.row.detail);
-          }
+          key: "attention",
+          align: "center"
         },
         {
           title: "操作",
@@ -103,7 +108,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.handleEditSite(params.row);
+                      this.editCata(params.row);
                     }
                   }
                 },
@@ -118,7 +123,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteSite();
+                      this.deleteConfirm(params.row);
                     }
                   }
                 },
@@ -128,120 +133,72 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          site: "1号宿舍楼",
-          location: "1号楼西门左拐20米",
-          opentime: "8:00-20:00",
-          bucketcata: "可回收物、其他垃圾",
-          bucketnum: "12",
-          detail: "可回收物垃圾桶8个、其他垃圾垃圾桶4个"
-        },
-        {
-          site: "2号宿舍楼",
-          location: "南门",
-          opentime: "8:00-20:00",
-          bucketcata: "其他垃圾",
-          bucketnum: "2",
-          detail: "其他垃圾垃圾桶2个"
-        },
-        {
-          site: "第一报告厅",
-          location: "第一报告厅",
-          opentime: "8:00-20:00",
-          bucketcata: "可回收物",
-          bucketnum: "2",
-          detail: "可回收物垃圾桶2个"
-        },
-        {
-          site: "餐厅",
-          location: "1餐2楼东门",
-          opentime: "8:00-20:00",
-          bucketcata: "厨余垃圾",
-          bucketnum: "10",
-          detail: "厨余垃圾垃圾桶10个"
-        },
-        {
-          site: "1号宿舍楼楼",
-          location: "1号楼西门左拐20米",
-          opentime: "8:00-20:00",
-          bucketcata: "可回收物、其他垃圾",
-          bucketnum: "12",
-          detail: "可回收物垃圾桶8个、其他垃圾垃圾桶4个"
-        },
-        {
-          site: "1号宿舍楼楼",
-          location: "1号楼西门左拐20米",
-          opentime: "8:00-20:00",
-          bucketcata: "可回收物、其他垃圾",
-          bucketnum: "12",
-          detail: "可回收物垃圾桶8个、其他垃圾垃圾桶4个"
-        }
-      ]
     };
   },
   methods: {
-    newSite() {
+    newCata() {
       this.modal = true;
       this.modalTitle = "新建站点";
     },
-    handleEditSite(site) {
+    editCata(row) {
       this.modal = true;
-      this.modalTitle = "编辑站点";
-      this.editSite.site = site.site;
-      this.editSite.location = site.location;
-      this.editSite.opentime = site.opentime;
-      this.editSite.bucketcata = site.bucketcata;
-      this.editSite.bucketnum = site.bucketnum;
-      this.editSite.detail = site.detail;
+      this.modalTitle = "编辑站点信息";
+      this.editId = row.locationinfoId;
+      this.formLeft.locationinfoName = row.locationinfoName;
+      this.formLeft.detail = row.detail;
+      this.formLeft.opentime = row.opentime;
+      this.formLeft.bucketcata = row.bucketcata;
+      this.formLeft.bucketnum = row.bucketnum;
+      this.formLeft.attention = row.attention;
     },
     handleForm() {
-      if (this.modalTitle === "新建站点") {
-        this.$Message.info("新建成功");
-      } else {
-        this.$Message.info("编辑成功");
+      const param = {
+        locationinfoName:this.formLeft.locationinfoName,
+        detail:this.formLeft.detail,
+        opentime:this.formLeft.opentime,
+        bucketcata:this.formLeft.bucketcata,
+        bucketnum:this.formLeft.bucketnum,
+        attention:this.formLeft.attention,
       }
-      this.clearForm();
+      if( this.modalTitle === "新建站点"){
+        this.$store.dispatch("addSite",{param:param,that:this})
+         this.formLeft = {}
+      }else{
+        this.$store.dispatch("editSite",{param:param,id:this.editId,that:this})
+         this.formLeft = {}
+      }
     },
     cancel() {
-      this.clearForm();
+      this.formLeft = {}
     },
-    // 清空表单
-    clearForm() {
-      his.editSite.site = "";
-      this.editSite.location = "";
-      this.editSite.opentime = "";
-      this.editSite.bucketcata = "";
-      this.editSite.bucketnum = "";
-      this.editSite.detail = "";
-    },
-    deleteSite() {
+    deleteConfirm(row) {
+      const id = row.locationinfoId
       this.$Modal.confirm({
-        title: "确定删除这条数据吗？",
+        title: "你确定删除该条信息吗？",
         onOk: () => {
-          // 发起删除数据的请求
-          this.$Message.info("删除成功");
+          // 删除订单信息
+          this.$store.dispatch("deleteSite",{id:id,that:this});
         },
         onCancel: () => {
-          // this.$Message.info("取消删除");
+          this.$Message.info("取消");
         }
       });
-    }
+    },
   }
 };
 </script>
 
 <style scoped>
-.site-manage {
+.cata-manage {
   width: 100%;
-  height: 100%;
-  /* background-color: green; */
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 .new-btn {
   padding: 40px 40px;
   text-align: left;
 }
-.site-list {
+.cata-list {
   padding: 10px 40px;
 }
 </style>

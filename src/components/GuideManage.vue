@@ -1,18 +1,18 @@
 <template>
-  <div class="guide-manage">
+  <div class="cata-manage">
     <div class="new-btn">
-      <Button type="info" @click="newGuide()">新建分类指南</Button>
+      <Button type="info" @click="newCata()">新建分类指南</Button>
     </div>
-    <div class="guide-list">
-      <Table border :columns="columns" :data="data"></Table>
+    <div class="cata-list">
+      <Table border :columns="columns" :data="guideList"></Table>
     </div>
     <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm()" @on-cancel="cancel">
-      <Form :model="editGarb" label-position="left" :label-width="100">
+      <Form :model="formLeft" label-position="left" :label-width="100">
         <FormItem label="垃圾名称">
-          <Input v-model="editGarb.garbagename"></Input>
+          <Input v-model="formLeft.classificationguideinfoName"></Input>
         </FormItem>
-        <FormItem label="类别">
-          <Input v-model="editGarb.cataname"></Input>
+         <FormItem label="垃圾类别">
+          <Input v-model="formLeft.classificationguideinfoClassification"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -20,30 +20,40 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
+  created() {
+    this.$store.dispatch('queryGuideList')
+  },
+  mounted(){
+  },
+  computed:{
+      ...mapState(["guideList"])
+  },
   data() {
     return {
       modal: false,
       modalTitle: "",
-      tip: "",
-      editGarb: {
-        garbagename: "",
-        cataname: ""
+      editId:'',
+      formLeft: {
+        classificationguideinfoName: "",
+        classificationguideinfoClassification: "",
       },
       columns: [
         {
           title: "垃圾名称",
-          key: "garbagename",
+          key: "classificationguideinfoName",
           align: "center"
         },
         {
           title: "垃圾类别",
-          key: "cataname",
+          key: "classificationguideinfoClassification",
           align: "center"
         },
         {
           title: "操作",
           key: "operation",
+          width: 150,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -74,7 +84,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteGuide();
+                      this.deleteConfirm(params.row);
                     }
                   }
                 },
@@ -84,82 +94,61 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          garbagename: "香蕉皮",
-          cataname: "厨余垃圾"
-        },
-        {
-          garbagename: "腐烂苹果",
-          cataname: "厨余垃圾"
-        },
-        {
-          garbagename: "塑料盒",
-          cataname: "可回收物"
-        },
-        {
-          garbagename: "碗",
-          cataname: "其他垃圾"
-        }
-      ]
     };
   },
   methods: {
-    newGuide() {
+    newCata() {
       this.modal = true;
       this.modalTitle = "新建分类指南";
     },
-    editCata(garb) {
+    editCata(row) {
       this.modal = true;
       this.modalTitle = "编辑分类指南";
-      this.editGarb.garbagename = garb.garbagename;
-      this.editGarb.cataname = garb.cataname;
+      this.editId = row.classificationguideinfoId;
+      this.formLeft.classificationguideinfoName = row.classificationguideinfoName;
+      this.formLeft.classificationguideinfoClassification = row.classificationguideinfoClassification;
     },
     handleForm() {
-      if (this.modalTitle === "新建分类指南") {
-        this.$Message.info("新建成功");
-      } else {
-        this.$Message.info("编辑成功");
+      const param = {
+        classificationguideinfoName:this.formLeft.classificationguideinfoName,
+        classificationguideinfoClassification:this.formLeft.classificationguideinfoClassification,
       }
-
-      this.clearForm();
+      if( this.modalTitle === "新建分类指南"){
+        this.$store.dispatch("addGuide",{param:param,that:this})
+      }else{
+        this.$store.dispatch("editGuide",{param:param,id:this.editId,that:this})
+      }
+      
     },
-    cancel() {
-      this.clearForm();
-    },
-    // 清空表单
-    clearForm() {
-      this.editGarb.garbagename = "";
-      this.editGarb.cataname = "";
-    },
-    deleteGuide() {
+    cancel() {},
+    deleteConfirm(row) {
+      const id = row.classificationguideinfoId
       this.$Modal.confirm({
-        title: "确定删除这条数据吗？",
-        // content: "<p>Content of dialog</p><p>Content of dialog</p>",
+        title: "你确定删除该条信息吗？",
         onOk: () => {
-          // 发起删除数据的请求
-          this.$Message.info("删除成功");
+          // 删除订单信息
+          this.$store.dispatch("deleteGuide",{id:id,that:this});
         },
         onCancel: () => {
-          // this.$Message.info("取消删除");
+          this.$Message.info("取消");
         }
       });
-    }
+    },
   }
 };
 </script>
 
 <style scoped>
-.guide-manage {
+.cata-manage {
   width: 100%;
-  height: 100%;
-  /* background-color: green; */
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 .new-btn {
   padding: 40px 40px;
   text-align: left;
 }
-.guide-list {
+.cata-list {
   padding: 10px 40px;
 }
 </style>

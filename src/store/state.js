@@ -1,5 +1,7 @@
 export default {
     // 定义状态
-    code:'',
-    cataList:{}
+    cataList:[],
+    guideList:[],
+    reportList:[],
+    siteList:[],
 }

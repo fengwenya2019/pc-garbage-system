@@ -4,18 +4,25 @@
       <h1>历史记录</h1>
       <ul>
         <li v-for="(report,index) in reportList" :key="index">
-          <div class="report-time">2020年5月1日</div>
-          <div class="report-list">
-            <div class="report-title">
-              校园日报
-              <span class="report-type">通知</span>
+          <div class="report-time">{{timeChange(report.greendailyinfoUploadtime)}}</div>
+          <div class="report-list-box">
+            <div class="report-list">
+              <div class="report-title">
+                {{report.greendailyinfoTitle}}
+                <span class="report-type">{{report.greendailyinfoDescription}}</span>
+              </div>
+              <div
+                class="report-content"
+              >
+                {{report.greendailyinfoText}}
+              </div>
+              <div class="reporter">
+                发布人：
+                <span>{{report.greendailyinfoAuthor}}</span>
+              </div>
             </div>
-            <div
-              class="report-content"
-            >我校今日共产生垃圾1.2吨，其中可回收垃圾1吨，有害垃圾0.02吨，其他垃圾0.1吨，厨余垃圾0.08吨。我校今日共产生垃圾1.2吨，其中可回收垃圾1吨，有害垃圾0.02吨，其他垃圾0.1吨，厨余垃圾0.08吨。我校今日共产生垃圾1.2吨，其中可回收垃圾1吨，有害垃圾0.02吨，其他垃圾0.1吨，厨余垃圾0.08吨。</div>
-            <div class="reporter">
-              发布人：
-              <span>校垃圾管理部门</span>
+            <div class="deleteBtn">
+              <i-button type="primary" @click="deleteReport(report.greendailyinfoId)">删除</i-button>
             </div>
           </div>
         </li>
@@ -25,11 +32,39 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
+  created() {
+    this.$store.dispatch('queryReportList')
+  },
+  computed:{
+      ...mapState(["reportList"])
+  },
   data() {
     return {
-      reportList: [{}, {}, {}]
     };
+  },
+  methods:{
+    // 时间转换
+    timeChange(time){
+      var now = new Date(time)
+      var year=now.getFullYear(); 
+      var month=now.getMonth()+1; 
+      var date=now.getDate(); 
+      return year+"年"+month+"月"+date+"日 " 
+    },
+    deleteReport(id){
+      this.$Modal.confirm({
+        title: "你确定删除该条信息吗？",
+        onOk: () => {
+          // 删除日报
+          this.$store.dispatch("deleteReport",{id:id,that:this});
+        },
+        onCancel: () => {
+          this.$Message.info("取消");
+        }
+      });
+    }
   }
 };
 </script>
@@ -41,14 +76,16 @@ export default {
 .report-history {
   width: 100%;
   height: 100%;
-  padding: 40px;
 }
 .form-box {
-  width: 1100px;
-  /* height: 600px; */
+  width: 100%;
+  margin: 0 auto;
   padding: 20px 50px;
   height: 650px;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .form-box ul {
   list-style: none;
@@ -57,12 +94,21 @@ export default {
 .form-box ul li {
   margin-bottom: 20px;
 }
+.report-list-box{
+  display: flex;
+}
 .report-list {
   width: 1000px;
   height: 300px;
   border: solid 1px #000;
   border-radius: 20px;
   position: relative;
+}
+.deleteBtn{
+  width: 80px;
+  height: 300px;
+  line-height: 300px;
+  font-size: 20px;
 }
 .report-time {
   text-align: left;

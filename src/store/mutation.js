@@ -1,11 +1,16 @@
 export default{
     // 定义同步方法
-    // 修改状态
-    setCode(state,v){
-        state.code = v;
-    },
-    setCata(state,v){
+    setCataList(state,v){
         state.cataList = v;
-    }
+    },
+    setGuideList(state,v){
+        state.guideList = v;
+    },
+    setReportList(state,v){
+        state.reportList = v;
+    },
+    setSiteList(state,v){
+        state.siteList = v;
+    },
     
 }

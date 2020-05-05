@@ -12,7 +12,7 @@
           @on-cancel="cancel"
           style="textAlign:left;color:black;"
         >
-          <Button>退出登录</Button>
+         <i-button type="primary">退出登录</i-button>
         </Poptip>
       </div>
     </header>
@@ -34,11 +34,6 @@
           </li>
           <li>
             <p class="nav-li-title">投放站点管理</p>
-            <router-link to="/home/locationmanage">
-              <p class="nav-li" :class="{active:isActive===3}" @click="handleClick(3)">
-                <Icon type="ios-pin-outline" />地点位置
-              </p>
-            </router-link>
             <router-link to="/home/sitemanage">
               <p class="nav-li" :class="{active:isActive===4}" @click="handleClick(4)">
                 <Icon type="ios-locate-outline" />投放站点
@@ -89,7 +84,6 @@ export default {
   },
   methods: {
     handleClick(index) {
-      console.log(index);
       this.isActive = index;
     },
     handleMouseEnter(index) {
