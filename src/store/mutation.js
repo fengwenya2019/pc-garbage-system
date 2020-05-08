@@ -12,5 +12,11 @@ export default{
     setSiteList(state,v){
         state.siteList = v;
     },
+    setQuaList(state,v){
+        state.quaList = v;
+    },
+    setChartList(state,v){
+        state.chartList = v;
+    },
     
 }

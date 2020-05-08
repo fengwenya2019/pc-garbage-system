@@ -266,4 +266,88 @@ export default{
         })
     },
 
+
+    // 获取记录列表
+    queryQua() {
+        const base = "/laji"
+        axios.post(base + "/laji/qua/getAllqua").then((res) => {
+            if(res.data.code === 100){
+                store.commit("setQuaList", res.data.extend.qualities)
+            }else{
+                Toast('网络错误');
+            }
+        }).catch((err) => {
+            Toast('网络错误');
+        })
+    },
+    // 新建记录
+    addQua(store,obj) {
+        const base = "/laji"
+        axios.post(base + "/laji/qua/addqua",{
+            "qualityinfoClassification":obj.param.qualityinfoClassification,
+            "qualityinfoWeight":obj.param.qualityinfoWeight,
+        }).then((res) => {
+            if(res.data.code === 100){
+                obj.that.$Message.success('创建成功');
+                store.dispatch('queryQua')
+            }else{
+                obj.that.$Message.success('创建失败');
+            }
+        }).catch((err) => {
+            obj.that.$Message.success('网络错误');
+        })
+    },
+    // 编辑站点信息
+    editQua(store,obj) {
+        console.log(obj,'edit')
+        const base = "/laji"
+        axios.post(base + "/laji/qua/updatequa",{
+            "qualityinfoId":obj.id,
+            "qualityinfoClassification":obj.param.qualityinfoClassification,
+            "qualityinfoWeight":obj.param.qualityinfoWeight,
+        }).then((res) => {
+            if(res.data.code === 100){
+                obj.that.$Message.success('编辑成功');
+                store.dispatch('queryQua')
+            }else{
+                obj.that.$Message.success('编辑失败');
+            }
+        }).catch((err) => {
+            obj.that.$Message.success('网络错误');
+        })
+    },
+    // 删除站点信息
+    deleteQua(store,obj) {
+        const base = "/laji"
+        axios.post(base + "/laji/qua/deletequa",{
+            'qualityinfoId':parseInt(obj.id),
+        }).then((res) => {
+            if(res.data.code === 100){
+                obj.that.$Message.success('删除成功');
+                store.dispatch('queryQua')
+            }else{
+                obj.that.$Message.success('删除失败');
+            }
+        }).catch((err) => {
+            obj.that.$Message.success('网络错误');
+        })
+    },
+
+    // 发送月份，获取垃圾产量数据
+    queryQuaByMonth(store,obj) {
+        const base = "/laji"
+        axios.post(base + "/laji/qua/getAllquaByDate",{
+            "date":obj.time,
+        }).then((res) => {
+            if(res.data.code === 100){
+                store.commit("setChartList", res.data.extend.res)
+            }else{
+                obj.that.$Message.success('创建失败');
+            }
+        }).catch((err) => {
+            obj.that.$Message.success('网络错误');
+        })
+    },
+
+
 }

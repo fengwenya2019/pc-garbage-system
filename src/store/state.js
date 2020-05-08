@@ -4,4 +4,6 @@ export default {
     guideList:[],
     reportList:[],
     siteList:[],
+    quaList:[],
+    chartList:[],
 }

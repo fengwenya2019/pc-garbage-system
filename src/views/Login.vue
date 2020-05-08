@@ -45,7 +45,7 @@ export default {
         this.$Message.success('登录成功');
         this.$router.push({
           //核心语句
-          path: "/home" //跳转的路径
+          path: "/home/catamanage" //跳转的路径
         });
       }).catch((err)=>{
           console.log(err)

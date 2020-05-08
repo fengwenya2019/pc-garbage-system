@@ -1,24 +1,18 @@
 <template>
   <div class="cata-manage">
     <div class="new-btn">
-      <Button type="info" @click="newRecord()">添加记录</Button>
+      <Button type="info" @click="newCata()">新建记录</Button>
     </div>
-    <div class="quasta-list">
-      <Table border :columns="columns" :data="data"></Table>
+    <div class="cata-list">
+      <Table border :columns="columns" :data="quaList"></Table>
     </div>
-    <!-- 新建编辑modal框 -->
-    <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm" @on-cancel="cancel">
-      <Form :model="editRec" label-position="left" :label-width="100">
-        <FormItem label="时间">
-          <Input v-model="editRec.time"></Input>
-        </FormItem>
+    <Modal v-model="modal" :title="modalTitle" @on-ok="handleForm()" @on-cancel="cancel">
+      <Form :model="formLeft" label-position="left" :label-width="100">
         <FormItem label="类别">
-          <Select v-model="editRec" :value="editRec.cata" style="width:390px">
-            <Option v-for="item in cataList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-          </Select>
+          <Input v-model="formLeft.qualityinfoClassification"></Input>
         </FormItem>
-        <FormItem label="垃圾产量">
-          <Input v-model="editRec.output"></Input>
+         <FormItem label="重量">
+          <Input v-model="formLeft.qualityinfoWeight"></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -26,84 +20,47 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 export default {
+  created() {
+    this.$store.dispatch('queryQua')
+  },
+  mounted(){
+  },
+  computed:{
+      ...mapState(["quaList"])
+  },
   data() {
     return {
       modal: false,
       modalTitle: "",
-      tip: "",
-      cataList: [
-        {
-          value: 1,
-          label: "厨余垃圾"
-        },
-        {
-          value: 2,
-          label: "有害垃圾"
-        },
-        {
-          value: 3,
-          label: "可回收物"
-        },
-        {
-          value: 4,
-          label: "其他垃圾"
-        }
-      ],
-      editRec: {
-        time: "",
-        cata: "",
-        output: ""
+      editId:'',
+      formLeft: {
+        qualityinfoClassification:"",
+        qualityinfoWeight: "",
       },
       columns: [
         {
-          title: "时间",
-          key: "time",
-          // width: 200,
+          title: "类别",
+          key: "qualityinfoClassification",
           align: "center"
         },
         {
-          title: "类别",
-          key: "cata",
-          width: 200,
-          align: "center",
-          filters: [
-            {
-              label: "厨余垃圾",
-              value: "厨余垃圾"
-            },
-            {
-              label: "有害垃圾",
-              value: "有害垃圾"
-            },
-            {
-              label: "可回收物",
-              value: "可回收物"
-            },
-            {
-              label: "其他垃圾",
-              value: "其他垃圾"
-            }
-          ],
-          filterMethod(value, row) {
-            return row.cata.indexOf(value) > -1;
-          }
+          title: "重量",
+          key: "qualityinfoWeight",
+          align: "center"
         },
-        {
-          title: "产量(单位：t)",
-          key: "output",
-          // width: 100,
-          align: "left",
-          // render: (h, params) => {
-          //   return h("div", params.row.output);
-          // },
+         {
+          title: "时间",
+          key: "qualityinfoTime",
           align: "center",
-          width: 200
+          render: (h, params) => {
+            return h("div", this.timeChange(params.row.qualityinfoTime));
+          }
         },
         {
           title: "操作",
           key: "operation",
-          width: 200,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -119,7 +76,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.editRecord(params.row);
+                      this.editCata(params.row);
                     }
                   }
                 },
@@ -134,7 +91,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteQua();
+                      this.deleteConfirm(params.row);
                     }
                   }
                 },
@@ -144,68 +101,54 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          time: "2020年1月1日",
-          cata: "厨余垃圾",
-          output: 1.2
-        },
-        {
-          time: "2020年1月1日",
-          cata: "其他垃圾",
-          output: 1.2
-        },
-        {
-          time: "2020年1月23日",
-          cata: "有害垃圾",
-          output: 10.1
-        },
-        {
-          time: "2020年1月24日",
-          cata: "厨余垃圾",
-          output: 2.2
-        },
-        {
-          time: "2020年1月25日",
-          cata: "其他垃圾",
-          output: 1.4
-        }
-      ]
     };
   },
   methods: {
-    newRecord() {
+    newCata() {
       this.modal = true;
       this.modalTitle = "新建记录";
     },
-    editRecord(record) {
+    editCata(row) {
       this.modal = true;
       this.modalTitle = "编辑记录";
-      this.editRec.time = record.time;
-      this.editRec.cata = record.cata;
-      this.editRec.output = record.output;
+      this.editId = row.qualityinfoId;
+      this.formLeft.qualityinfoClassification = row.qualityinfoClassification;
+      this.formLeft.qualityinfoWeight = row.qualityinfoWeight;
     },
     handleForm() {
-      if (this.modalTitle === "新建记录") {
-        this.$Message.info("新建成功");
-      } else {
-        this.$Message.info("编辑成功");
+      const param = {
+        qualityinfoClassification:this.formLeft.qualityinfoClassification,
+        qualityinfoWeight:this.formLeft.qualityinfoWeight,
       }
-      this.clearForm();
+      if( this.modalTitle === "新建记录"){
+        this.$store.dispatch("addQua",{param:param,that:this})
+      }else{
+        this.$store.dispatch("editQua",{param:param,id:this.editId,that:this})
+      }
+      
     },
     cancel() {},
-    deleteQua() {
+    deleteConfirm(row) {
+      const id = row.qualityinfoId
       this.$Modal.confirm({
-        title: "确定删除这条数据吗？",
+        title: "你确定删除该条信息吗？",
         onOk: () => {
-          // 发起删除数据的请求
-          this.$Message.info("删除成功");
+          // 删除订单信息
+          this.$store.dispatch("deleteQua",{id:id,that:this});
         },
         onCancel: () => {
-          // this.$Message.info("取消删除");
+          this.$Message.info("取消");
         }
       });
-    }
+    },
+     // 时间转换
+    timeChange(time){
+      var now = new Date(time)
+      var year=now.getFullYear(); 
+      var month=now.getMonth()+1; 
+      var date=now.getDate(); 
+      return year+"年"+month+"月"+date+"日 " 
+    },
   }
 };
 </script>
@@ -213,14 +156,14 @@ export default {
 <style scoped>
 .cata-manage {
   width: 100%;
-  height: 100%;
-  /* background-color: green; */
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 .new-btn {
   padding: 40px 40px;
   text-align: left;
 }
-.quasta-list {
+.cata-list {
   padding: 10px 40px;
 }
 </style>
